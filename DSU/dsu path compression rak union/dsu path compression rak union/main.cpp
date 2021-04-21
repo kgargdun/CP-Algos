@@ -1,67 +1,110 @@
 #include <iostream>
-#include<map>
-#include<vector>
-#include<climits>
-#include<queue>
-#include<cmath>
-#include<stack>
-#include<string>
-#include<algorithm>
+#include <map>
+#include <vector>
+#include <climits>
+#include <queue>
+#include <cmath>
+#include <stack>
+#include <string>
+#include <algorithm>
 #define pb push_back
 #define N (lli)(3e5)
-#define lli  long long int
-#define mod (lli)(1e9+7)
+#define lli long long int 
+#define mod (lli)(1e9 + 7)
 #define INF lli_MAX
-#define fast_io ios_base::sync_with_stdio(false);cin.tie(NULL)
+#define fast_io                       \
+    ios_base::sync_with_stdio(false); \
+    cin.tie(NULL)
 #define pb push_back
 using namespace std;
 
-int find_set(int x,vector<int>&parent)
-{
-    if(parent[x]==x) return x;
-    else return parent[x] = find_set(parent[x],parent);
-}
-
-void union_set(int x,int y,vector<int>&parent,vector<int>&rank)
-{
-    int x_ = find_set(x,parent);
-    int y_ = find_set(y,parent);
-    if(x_==y_) return;
-    
-    if(rank[x_]>rank[y_])
-    {
-        parent[y_] = x_;
-    }
-    else if (rank[y_]>rank[x_])
-    {
-        parent[x_] = y_;
-    }
-    else
-    {
-        parent[y_] = x_;
-        rank[x_] ++;
-    }
-}
 int main()
 {
-    int n;
-    cin>>n;
-    vector<int>rank(n+1);
-    vector<int>parent(n+1);
-    for(int i=1;i<=n;i++)
+    lli tes;
+    cin >> tes;
+    while (tes--)
     {
-        parent[i] = i;
-        rank[i] = 1;
-    }
-    
-//    cout<<find_set(4,parent)<<endl;
-//    union_set(1,2,parent,rank);
-//    cout<<find_set(2,parent)<<endl;
-//    cout<<find_set(1,parent)<<endl;
-//    union_set(1,6,parent,rank);
-//    cout<<find_set(6,parent)<<endl;
-//    union_set(7,5,parent,rank);
-//    cout<<find_set(5,parent)<<endl;
-//    cout<<find_set(1,parent)<<endl;
+        lli n, p, k;
+        lli cost = 0;
+        cin >> n >> p;
+        k = n - 1;
 
+        vector<bool> self(n + 1, true);
+
+        vector<lli> arr(n + 1);
+        vector<pair<lli, lli> > forSort;
+        for (lli i = 1; i <= n; i++)
+        {
+            cin >> arr[i];
+            forSort.pb(make_pair(arr[i], i));
+        }
+
+        sort(forSort.begin(), forSort.end());
+
+        for (lli i = 0; i < n; i++)
+        {
+            lli ix = forSort[i].second;
+
+            if (!self[ix] or arr[ix] > p)
+                continue;
+            lli l, r;
+            l = ix - 1;
+            r = ix + 1;
+
+
+
+            while (l > 0)
+            {
+                if (arr[l] % arr[ix] != 0)
+                    break;
+                else
+                {
+                    if (self[l])
+                    {
+                        self[l] = false;
+                        cost += arr[ix];
+                        k--;
+                        l--;
+                    }
+                    else
+                    {
+                        cost += arr[ix];
+                        k--;
+                        break;
+                    }
+                }
+            }
+
+
+            while (r <= n)
+            {
+                if (arr[r] % arr[ix] != 0)
+                    break;
+                else
+                {
+                    if (self[r])
+                    {
+                        self[r] = false;
+                        cost += arr[ix];
+                        k--;
+                        r++;
+                    }
+                    else
+                    {
+                        cost += arr[ix];
+                        k--;
+                        break;
+                    }
+                }
+            }
+
+        }
+
+        // cout<<k<<endl;
+
+        cost += p*k;
+        cout<<cost<<endl;
+
+
+    }
 }
