@@ -1,110 +1,82 @@
 #include <iostream>
-#include <map>
-#include <vector>
-#include <climits>
-#include <queue>
-#include <cmath>
-#include <stack>
-#include <string>
-#include <algorithm>
+#include<map>
+#include<vector>
+#include<climits>
+#include<queue>
+#include<cmath>
+#include<set>
+#include<string.h>
+#include<stack>
+#include<algorithm>
+#include<unordered_map>
 #define pb push_back
-#define N (lli)(3e5)
-#define lli long long int 
-#define mod (lli)(1e9 + 7)
-#define INF lli_MAX
-#define fast_io                       \
-    ios_base::sync_with_stdio(false); \
-    cin.tie(NULL)
+#define N (lli)(2e5)
+#define INF (2e9)
+#define M (lli)(1e6)
+#define lli long long int
+#define mod (lli)(1e9+7)
+#define INFF LLONG_MAX
+#define fast_io ios_base::sync_with_stdio(false);cin.tie(NULL)
 #define pb push_back
 using namespace std;
 
+int ranks[N];
+int parent[N];
+
+int find(int x)
+{
+	if (parent[x] == x) return x;
+	else return parent[x] = find(parent[x]);
+}
+
+bool join(int x, int y)
+{
+	int x_ = find(x);
+	int y_ = find(y);
+
+
+	if (x_ == y_) return false;
+
+	if (ranks[x_] > ranks[y_])
+	{
+		parent[y_] = x_;
+
+	}
+	else if (ranks[y_] > ranks[x_])
+	{
+		parent[x_] = y_;
+	}
+	else
+	{
+		parent[y_] = x_;
+		ranks[x_]++;
+
+	}
+
+	return true;
+
+}
+
 int main()
 {
-    lli tes;
-    cin >> tes;
-    while (tes--)
-    {
-        lli n, p, k;
-        lli cost = 0;
-        cin >> n >> p;
-        k = n - 1;
 
-        vector<bool> self(n + 1, true);
+	fast_io;
+#ifndef ONLINE_JUDGE
+	freopen("input.txt", "r", stdin);
+	freopen("o3.txt", "w", stdout);
+#endif
 
-        vector<lli> arr(n + 1);
-        vector<pair<lli, lli> > forSort;
-        for (lli i = 1; i <= n; i++)
-        {
-            cin >> arr[i];
-            forSort.pb(make_pair(arr[i], i));
-        }
+	int n;
+	cin >> n;
+	for (int i = 1; i <= n; i++)
+	{
+		parent[i] = i;
+		ranks[i] = 1;
 
-        sort(forSort.begin(), forSort.end());
-
-        for (lli i = 0; i < n; i++)
-        {
-            lli ix = forSort[i].second;
-
-            if (!self[ix] or arr[ix] > p)
-                continue;
-            lli l, r;
-            l = ix - 1;
-            r = ix + 1;
+	}
 
 
 
-            while (l > 0)
-            {
-                if (arr[l] % arr[ix] != 0)
-                    break;
-                else
-                {
-                    if (self[l])
-                    {
-                        self[l] = false;
-                        cost += arr[ix];
-                        k--;
-                        l--;
-                    }
-                    else
-                    {
-                        cost += arr[ix];
-                        k--;
-                        break;
-                    }
-                }
-            }
 
-
-            while (r <= n)
-            {
-                if (arr[r] % arr[ix] != 0)
-                    break;
-                else
-                {
-                    if (self[r])
-                    {
-                        self[r] = false;
-                        cost += arr[ix];
-                        k--;
-                        r++;
-                    }
-                    else
-                    {
-                        cost += arr[ix];
-                        k--;
-                        break;
-                    }
-                }
-            }
-
-        }
-
-        // cout<<k<<endl;
-
-        cost += p*k;
-        cout<<cost<<endl;
-
-
-    }
 }
+
