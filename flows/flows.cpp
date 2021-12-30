@@ -17,34 +17,78 @@
 #define pb push_back
 using namespace std;
 
-bool bfs(vector<vector<int>>&adj, int src, int sink, int parent)
-{
+vector<lli>parent;
+vector<vector<lli>>adj;
+map<pair<lli, lli>, lli>capacity;
+lli n, m;
 
+lli bfs(lli source, lli destination)
+{
+	queue<pair<lli, lli>>q;
+	q.push({source, INF});
+	for (lli i = 1; i <= n; i++) parent[i] = -1;
+	parent[source] = 0;
+
+	while (!q.empty())
+	{
+		lli node = q.front().first;
+		lli flow = q.front().second;
+		q.pop();
+		for (lli child : adj[node])
+		{
+			if (parent[child] != -1 or capacity[ {node, child}] == 0) continue;
+			parent[child] = node;
+			lli new_flow = min(flow, capacity[ {node, child}]);
+			if (child == destination) return new_flow;
+			q.push({child, new_flow});
+		}
+	}
+	return 0;
 }
 
 int  main()
 {
-
+	fast_io;
 #ifndef ONLINE_JUDGE
 	freopen("input.txt", "r", stdin);
 	freopen("output.txt", "w", stdout);
 #endif
 
-	int v, e;
-	cin >> v >> e;
-	vector<vector<int>>adj(v + 1, vector<int>(v + 1, 0));
+	cin >> n >> m;
+	lli u, v, c, new_flow, src, dest;
+	lli flow;
 
-
-	int x, y, w;
-	for (int i = 0; i < e; i++)
+	adj.resize(n + 1);
+	for (lli i = 0; i < m; i++)
 	{
-		cin >> x >> y >> w;
-		adj[x][y] = w;
+		cin >> u >> v >> c;
+		capacity[ {u, v}] += c;
+		adj[u].pb(v);
+		adj[v].pb(u);
 	}
 
 
+	parent.resize(n + 1);
+	flow = 0;
+	src =  1;
+	dest = n;
 
+	while (1)
+	{
+		new_flow = bfs(src, dest);
+		if (new_flow == 0) break;
 
+		flow  += new_flow;
+		lli cur = dest;
+		while (cur != src)
+		{
+			lli prev = parent[cur];
+			capacity[ {prev, cur}] -= new_flow;
+			capacity[ {cur, prev}] += new_flow;
+			cur = prev;
+		}
+	}
 
+	cout << flow << endl;
 
 }
